@@ -16,6 +16,11 @@ follow the 6 steps below
 5. Then to serve the project run `npm run serve`
 6. Either CTRL+click the link or open a web browser and type in `localhost:8080`
 
+## Debugging Vue2
+
+**See the second answer**
+https://stackoverflow.com/questions/73211329/vuejs-unbound-breakpoint-some-of-your-breakpoints-could-not-be-set-in-vscode
+
 ## Vue Default Readme
 
 ```
