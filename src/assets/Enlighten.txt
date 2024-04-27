@@ -1,0 +1,30 @@
+16x20
+..................A.
+PRS..............B..
+.OA.............S...
+ENLIGHTEN.I....T...N
+..IY.....N....R...O.
+..O.M...H....A...I..
+..N.BOBELCNUC...T..F
+N.....R.YRDT...A..U.
+.U...I.P..I...L..N..
+F.F.T...HOL..U......
+.U.A....NIOSS.......
+..N..THOMASPOULTER..
+.C.......IAM....N...
+E.......KC.....U....
+........N.....F.....
+.......E............
+ENLIGHTEN
+ALION
+THOMAS POULTER
+SOLID
+ENCAPSULATION
+ABSTRACTION
+INHERITANCE
+POLYMORPHISM
+DRY
+UNCLE BOB
+SRP
+OOP
+FUN
