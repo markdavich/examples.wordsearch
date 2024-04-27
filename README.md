@@ -7,13 +7,14 @@
 
 This project uses the Vue framework.
 In order to run the application,
-follow the 5 steps below
+follow the 6 steps below
 
-1. Clone or download the project
-2. Open a console/terminal at the project root
-3. Run the following command `npm install`
-4. Then to serve the project run `npm run serve`
-5. Either CTRL+click the link or open a web browser and type in `localhost:8080`
+1. Download and install [node.js](https://nodejs.org/en/download)
+2. Clone or download the project
+3. Open a console/terminal at the project root
+4. Run the following command `npm install`
+5. Then to serve the project run `npm run serve`
+6. Either CTRL+click the link or open a web browser and type in `localhost:8080`
 
 ## Vue Default Readme
 
