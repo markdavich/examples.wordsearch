@@ -1,8 +1,6 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import WordSearchView from "@/views/WordSearchView.vue";
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(VueRouter);
+import WordSearchView from "@/views/WordSearchView.vue";
 
 const routes = [
   {
@@ -21,8 +19,9 @@ const routes = [
   }
 ];
 
-const router = new VueRouter({
-  routes
-});
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: routes,
+})
 
-export default router;
+export default router

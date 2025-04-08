@@ -7,13 +7,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-export default Vue.extend({
+export default {
   name: "WordSearchGrid",
   props: {
     letters: { type: Array, required: true },
   },
-});
+};
 </script>
 
 <style lang="css" scoped>

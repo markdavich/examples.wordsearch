@@ -1,4 +1,4 @@
-// An attemt a enumerations
+// An attempt a enumerations
 export class MatrixShape {
   static get tall() {
     return "tall";

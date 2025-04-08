@@ -66,7 +66,6 @@ export default class DiagonalWords {
 
   _getEmptyDiagonalArray() {
     return new Array(this.diagonalCount).fill().map(() => []);
-    hd;
   }
 
   find(words) {

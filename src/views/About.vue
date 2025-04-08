@@ -1,6 +1,7 @@
 <template>
   <div class="about">
     <h1>About</h1>
+    <Soulution />
     <p>I have never diagonally traversed an array before...</p>
     <Note v-for="(note, index) in notes" :key="`note-${index}`" :note="note" />
     <p>I was able to turn the data set into a single string and only loop the 'Words' in order to find matches</p>
@@ -8,13 +9,14 @@
 </template>
 
 <script>
-import Vue from "vue";
 import Note from "@/components/Note.vue";
+import Soulution from "@/components/Solution.vue";
 
-export default Vue.extend({
+export default {
   name: "about",
   components: {
     Note,
+    Soulution,
   },
   data() {
     return {
@@ -99,7 +101,7 @@ export default Vue.extend({
       ],
     };
   },
-});
+};
 </script>
 
 <style lang="css" scoped>

@@ -5,9 +5,7 @@
   </select>
 </template>
 
-<script>
-import Vue from "vue";
-
+<script type="module">
 export default {
   name: "FileChooser",
   props: {
@@ -19,16 +17,16 @@ export default {
     };
   },
   methods: {
-    changeFile(event) {
+    async changeFile(event) {
       const fileName = event.target.value;
-      const file = require(`raw-loader!@/assets/${fileName}.txt`);
+      const file = await import(`@/assets/${fileName}.txt?raw`)
       const blob = new Blob([file.default], { type: "text/plain" });
       const fileReader = new FileReader();
       fileReader.onload = this.onFileLoad;
       fileReader.readAsText(blob);
     },
     onFileLoad(progressEvent) {
-      const fileData = progressEvent.target.result;
+      const fileData = progressEvent.target.result.replace(/\r/g, '');
       this.$emit("fileSelected", fileData, true);
     },
   },

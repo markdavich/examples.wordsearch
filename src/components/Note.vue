@@ -1,27 +1,32 @@
 <template>
   <div class="note shadow">
     <div class="caption">{{ note.caption }}</div>
-    <img v-if="src" class="picture shadow" :src="src" alt />
+    <img v-if="src" class="picture shadow" :src="url" alt />
     <div class="foot">{{ note.foot }}</div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
+import { computed } from "vue";
 export default {
   name: "ntok",
   props: ["note"],
   data() {
     return {
-      src: "",
+      url: "",
+      src: true,
     };
   },
   watch: {
     note: {
       immediate: true,
-      handler(newValue) {
-        const result = require(`@/assets/images/${newValue.file}.jpg`);
-        this.src = result;
+      async handler(newValue) {
+        if (newValue && newValue.file) {
+          // Dynamically resolve the image path
+          this.url = new URL(`../assets/images/${newValue.file}.jpg`, import.meta.url).href;
+        } else {
+          this.src = false; // Hide the image if no file is provided
+        }
       },
     },
   },

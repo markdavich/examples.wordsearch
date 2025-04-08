@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import Vue from "vue";
 import NavBar from "./components/NavBar.vue";
+import { RouterLink, RouterView } from 'vue-router'
 export default {
   name: "App",
   components: {
@@ -20,12 +20,14 @@ export default {
 .shadow {
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.267);
 }
+
 :root {
   --light-grey: rgb(107, 107, 107);
   --white: rgb(231, 231, 231);
   --padding: 10px;
   --tile-background: white;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

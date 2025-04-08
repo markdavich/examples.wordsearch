@@ -1,22 +1,20 @@
 {
-  "name": "alphabet-soup",
-  "version": "0.1.0",
+  "name": "examples.word-search",
+  "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
-    "vue": "^2.6.11",
-    "vue-router": "^3.2.0"
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.4.0",
-    "@vue/cli-plugin-router": "^4.4.0",
-    "@vue/cli-service": "^4.4.0",
-    "raw-loader": "^4.0.1",
-    "vue-loader": "^15.9.3",
-    "vue-template-compiler": "^2.6.11"
+    "@vitejs/plugin-vue": "^5.2.3",
+    "vite": "^6.2.4",
+    "vite-plugin-vue-devtools": "^7.7.2"
   }
 }

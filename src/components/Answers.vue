@@ -6,13 +6,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-export default Vue.extend({
+export default {
   name: "Answers",
   props: {
     answers: { type: Array, required: true },
   },
-});
+};
 </script>
 
 <style lang="css" scoped>

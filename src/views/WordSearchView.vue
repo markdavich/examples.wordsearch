@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import Vue from "vue";
-
 // Components
 import FileInput from "@/components/FileInput.vue";
 import WordSearchGrid from "@/components/WordSearchGrid.vue";
@@ -26,7 +24,7 @@ import WordsToFind from "@/components/WordsToFind.vue";
 import WordSearch from "@/models/word-search.js";
 import WordFinder from "@/models/word-finder";
 
-export default Vue.extend({
+export default {
   name: "WordSearchView",
   components: {
     FileInput,
@@ -53,7 +51,7 @@ export default Vue.extend({
       this.answers = finder.matches;
     },
   },
-});
+};
 </script>
 
 <style lang="css" scoped>
