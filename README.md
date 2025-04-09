@@ -1,5 +1,7 @@
 ## About
 
+⚠️ I *just* migrated this project to Vue 3, the README still has some Vue 2 artifacts, but it will guide you throug cloning and running that app, as well as inteoduce you to the requirements the app meets.
+
 > This challenge was created by [**Enlighten an Alion company**](https://www.eitccorp.com/).
 > The author of the code is Mark Davich
 
@@ -13,7 +15,7 @@ follow the 6 steps below
 2. Clone or download the project
 3. Open a console/terminal at the project root
 4. Run the following command `npm install`
-5. Serve (run/view in browser) the project by running `npm run serve`
+5. Serve (run/view in browser) the project by running `npm run dev`
 6. Either <kbd>Ctrl</kbd> + <kbd>click</kbd> the link or open a web browser and type in `localhost:8080`
 
 ## Debugging Vue2
@@ -27,10 +29,10 @@ https://stackoverflow.com/questions/73211329/vuejs-unbound-breakpoint-some-of-yo
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles, serves, and hot-reloads for development
 
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compiles and minifies for production
