@@ -1,0 +1,10 @@
+const n=`5x5
+H A S D F
+G E Y B H
+J K L Z X
+C V B L N
+G O O D O
+HELLO
+GOOD
+BYE
+`;export{n as default};
