@@ -2,8 +2,10 @@ import Matrix from "@/models/matrix.js";
 
 export default class VerticalWords {
   constructor(lettersGrid) {
-    this.columnCount = lettersGrid[0].length;
     const tranposed = Matrix.transpose(lettersGrid);
+    // BUG FIX: columnCount must be from TRANSPOSED grid, not original
+    // Original: this.columnCount = lettersGrid[0].length;
+    this.columnCount = tranposed[0].length;
     this.data = tranposed.flat().join("");
   }
 

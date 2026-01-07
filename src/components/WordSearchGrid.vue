@@ -1,18 +1,37 @@
 <template>
   <div class="word-search-grid shadow">
     <div class="row" v-for="(row, rIndex) in letters" :key="`wsg-row-${rIndex}`">
-      <div class="letter" v-for="(letter, lIndex) in row" :key="`wsg-column-${lIndex}`">{{ letter }}</div>
+      <div
+        class="letter"
+        v-for="(letter, lIndex) in row"
+        :key="`wsg-column-${lIndex}`"
+        :class="{ highlighted: getCellColor(rIndex, lIndex) }"
+        :style="getCellStyle(rIndex, lIndex)"
+      >
+        {{ letter }}
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "WordSearchGrid",
-  props: {
-    letters: { type: Array, required: true },
-  },
-};
+<script setup>
+const props = defineProps({
+  letters: { type: Array, required: true },
+  highlightedCells: { type: Array, default: () => [] },
+});
+
+function getCellColor(row, col) {
+  const cell = props.highlightedCells.find(c => c.row === row && c.col === col);
+  return cell ? cell.color : null;
+}
+
+function getCellStyle(row, col) {
+  const color = getCellColor(row, col);
+  if (color) {
+    return { backgroundColor: color };
+  }
+  return {};
+}
 </script>
 
 <style lang="css" scoped>
@@ -49,5 +68,9 @@ export default {
   font-size: 1.5em;
   height: 1.5em;
   width: 1.5em;
+}
+
+.letter.highlighted {
+  font-weight: bold;
 }
 </style>

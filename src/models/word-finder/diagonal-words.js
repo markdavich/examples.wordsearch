@@ -162,12 +162,16 @@ export default class DiagonalWords {
     let absoluteTop, absoluteBottom, startColumn, endColumn, offset;
 
     if (row > this.columns - 1) {
-      absoluteTop = row - (this.columns - 1);
+      // BUG FIX: absoluteTop must include position within diagonal
+      // Original: absoluteTop = row - (this.columns - 1);
+      absoluteTop = row - (this.columns - 1) + Math.min(start, end);
       startColumn = start < end ? start : end;
       endColumn = start < end ? end : start;
     } else {
       offset = this.columns - 1 - row;
-      absoluteTop = offset + Math.min(start, end);
+      // BUG FIX: offset is for columns only, not rows. Row = position in diagonal.
+      // Original: absoluteTop = offset + Math.min(start, end);
+      absoluteTop = Math.min(start, end);
       startColumn = start + offset;
       endColumn = end + offset;
     }

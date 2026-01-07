@@ -1,17 +1,25 @@
 <template>
   <div class="words shadow">
     <div class="title">Find These</div>
-    <div class="row" v-for="(word, wIndex) in words" :key="`wtf-word-${wIndex}`">{{ word }}</div>
+    <div
+      class="row"
+      v-for="(word, wIndex) in words"
+      :key="`wtf-word-${wIndex}`"
+      :class="{ highlighted: word === selectedWord }"
+      @click="emit('wordSelected', word)"
+    >
+      {{ word }}
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "WordsToFind",
-  props: {
-    words: { type: Array, required: true },
-  },
-};
+<script setup>
+defineProps({
+  words: { type: Array, required: true },
+  selectedWord: { type: String, default: null },
+});
+
+const emit = defineEmits(['wordSelected']);
 </script>
 
 <style lang="css" scoped>
@@ -38,6 +46,15 @@ export default {
   border-top: none;
 
   margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.row:hover {
+  background-color: #e0e0e0;
+}
+
+.row.highlighted {
+  background-color: #b3d9ff;
 }
 
 .words .row:last-child {
