@@ -17,25 +17,26 @@
  */
 
 // Individual adapters
-export { GeminiAdapter } from './gemini-adapter';
-export type { GeminiAdapterConfig } from './gemini-adapter';
-
-export { GroqAdapter } from './groq-adapter';
-export type { GroqAdapterConfig } from './groq-adapter';
-
-export { CloudflareAIAdapter } from './cloudflare-ai-adapter';
-export type { CloudflareAIAdapterConfig } from './cloudflare-ai-adapter';
-
-export { TogetherAIAdapter } from './together-ai-adapter';
-export type { TogetherAIAdapterConfig } from './together-ai-adapter';
+export { GeminiAdapter } from './gemini-adapter.js';
+export { GroqAdapter } from './groq-adapter.js';
+export { CloudflareAIAdapter } from './cloudflare-ai-adapter.js';
+export { TogetherAIAdapter } from './together-ai-adapter.js';
 
 // Factory for creating adapters
 export {
   createAIAdapter,
   getSupportedProviders,
   isProviderSupported,
-} from './ai-adapter-factory';
-export type { AIAdapterFactoryConfig } from './ai-adapter-factory';
+} from './ai-adapter-factory.js';
+
+// Re-export configs from config folder for convenience
+export type {
+  GeminiAdapterConfig,
+  GroqAdapterConfig,
+  CloudflareAIAdapterConfig,
+  TogetherAIAdapterConfig,
+  AIAdapterFactoryConfig,
+} from '../config/index.js';
 
 // Re-export the interface for convenience
-export type { AIAdapter } from '../core/interfaces';
+export type { AIAdapter } from '../interfaces/index.js';

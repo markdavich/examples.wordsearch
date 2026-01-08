@@ -14,29 +14,11 @@
  * without affecting the rest of the application.
  */
 
-import type { AIAdapter } from '../core/interfaces';
-import { IMAGE_PARSE_PROMPT, TEXT_PARSE_PROMPT } from '../core/prompts';
+import type { AIAdapter } from '../interfaces/index.js';
+import type { GeminiAdapterConfig } from '../config/index.js';
+import { IMAGE_PARSE_PROMPT, TEXT_PARSE_PROMPT } from '../prompts/index.js';
 
-/**
- * Configuration options for the Gemini adapter
- */
-export interface GeminiAdapterConfig {
-  /**
-   * Your Gemini API key (get one free at https://ai.google.dev)
-   */
-  apiKey: string;
-
-  /**
-   * Which Gemini model to use.
-   * Default: 'gemini-2.0-flash' (good balance of speed and quality)
-   *
-   * Options:
-   * - 'gemini-2.0-flash' - Fast, good for most use cases
-   * - 'gemini-1.5-pro' - Higher quality, slower
-   * - 'gemini-1.5-flash' - Previous generation flash model
-   */
-  model?: string;
-}
+export type { GeminiAdapterConfig } from '../config/index.js';
 
 /**
  * The structure of a Gemini API request

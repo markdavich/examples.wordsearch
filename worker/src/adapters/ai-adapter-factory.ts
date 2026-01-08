@@ -9,33 +9,15 @@
  * - Closed for modification: Existing code doesn't need to change when adding providers
  */
 
-import type { AIAdapter, AIProviderType, PlatformConfig } from '../core/interfaces';
-import { DEFAULT_AI_PROVIDER } from '../core/interfaces';
-import { GeminiAdapter } from './gemini-adapter';
-import { GroqAdapter } from './groq-adapter';
-import { CloudflareAIAdapter } from './cloudflare-ai-adapter';
-import { TogetherAIAdapter } from './together-ai-adapter';
+import type { AIAdapter, AIProviderType, PlatformConfig } from '../interfaces/index.js';
+import type { AIAdapterFactoryConfig } from '../config/index.js';
+import { DEFAULT_AI_PROVIDER } from '../interfaces/index.js';
+import { GeminiAdapter } from './gemini-adapter.js';
+import { GroqAdapter } from './groq-adapter.js';
+import { CloudflareAIAdapter } from './cloudflare-ai-adapter.js';
+import { TogetherAIAdapter } from './together-ai-adapter.js';
 
-/**
- * Configuration for creating AI adapters
- */
-export interface AIAdapterFactoryConfig {
-  /**
-   * Platform configuration for accessing secrets
-   */
-  platform: PlatformConfig;
-
-  /**
-   * Which AI provider to use
-   */
-  provider?: AIProviderType;
-
-  /**
-   * Cloudflare AI binding (only needed for 'cloudflare-ai' provider)
-   * This comes from the Cloudflare Workers environment
-   */
-  cloudflareAI?: Ai;
-}
+export type { AIAdapterFactoryConfig } from '../config/index.js';
 
 /**
  * Create an AI adapter based on the specified provider.

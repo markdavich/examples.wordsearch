@@ -13,30 +13,11 @@
  * Get your API key at: https://api.together.xyz/
  */
 
-import type { AIAdapter } from '../core/interfaces';
-import { IMAGE_PARSE_PROMPT, TEXT_PARSE_PROMPT } from '../core/prompts';
+import type { AIAdapter } from '../interfaces/index.js';
+import type { TogetherAIAdapterConfig } from '../config/index.js';
+import { IMAGE_PARSE_PROMPT, TEXT_PARSE_PROMPT } from '../prompts/index.js';
 
-/**
- * Configuration options for the Together AI adapter
- */
-export interface TogetherAIAdapterConfig {
-  /**
-   * Your Together AI API key (get one at https://api.together.xyz/)
-   */
-  apiKey: string;
-
-  /**
-   * Which model to use for vision tasks.
-   * Default: 'meta-llama/Llama-Vision-Free' (free tier)
-   */
-  visionModel?: string;
-
-  /**
-   * Which model to use for text-only tasks.
-   * Default: 'meta-llama/Llama-3.3-70B-Instruct-Turbo'
-   */
-  textModel?: string;
-}
+export type { TogetherAIAdapterConfig } from '../config/index.js';
 
 /**
  * Together AI API request structure (OpenAI-compatible)

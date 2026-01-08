@@ -19,8 +19,8 @@ import type {
   PlatformConfig,
   ParsePuzzleRequest,
   ParsePuzzleResult,
-} from './interfaces';
-import { isImageType, isDocumentType } from './interfaces';
+} from '../interfaces/index.js';
+import { isImageType, isDocumentType } from '../interfaces/index.js';
 
 /**
  * The main puzzle parser class.

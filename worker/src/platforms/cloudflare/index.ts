@@ -16,8 +16,8 @@
  *   npx wrangler dev
  */
 
-import { PuzzleParser, type PlatformConfig, type ParsePuzzleRequest } from '../../core';
-import { createAIAdapter } from '../../adapters';
+import { PuzzleParser, type PlatformConfig, type ParsePuzzleRequest } from '../../core/index.js';
+import { createAIAdapter } from '../../adapters/index.js';
 
 /**
  * Cloudflare Workers use a specific environment interface for secrets.

@@ -18,8 +18,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { PuzzleParser, type PlatformConfig, type ParsePuzzleRequest } from '../../../core';
-import { createAIAdapter } from '../../../adapters';
+import { PuzzleParser, type PlatformConfig, type ParsePuzzleRequest } from '../../../core/index.js';
+import { createAIAdapter } from '../../../adapters/index.js';
 
 /**
  * Create a platform configuration for Vercel.

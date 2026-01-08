@@ -6,9 +6,9 @@
  */
 
 // Main puzzle parser
-export { PuzzleParser } from './puzzle-parser';
+export { PuzzleParser } from './puzzle-parser.js';
 
-// Interfaces and types
+// Re-export interfaces and types from the interfaces folder
 export type {
   AIAdapter,
   PlatformConfig,
@@ -17,16 +17,16 @@ export type {
   ParsePuzzleError,
   ParsePuzzleResult,
   AIProviderType,
-} from './interfaces';
+} from '../interfaces/index.js';
 
-// Utility functions and constants
+// Re-export utility functions and constants from the interfaces folder
 export {
   isImageType,
   isDocumentType,
   SUPPORTED_IMAGE_TYPES,
   SUPPORTED_DOCUMENT_TYPES,
   DEFAULT_AI_PROVIDER,
-} from './interfaces';
+} from '../interfaces/index.js';
 
-// Prompts (in case you want to customize them)
-export { IMAGE_PARSE_PROMPT, TEXT_PARSE_PROMPT, getPrompt } from './prompts';
+// Re-export prompts from the prompts folder
+export { IMAGE_PARSE_PROMPT, TEXT_PARSE_PROMPT, getPrompt } from '../prompts/index.js';
