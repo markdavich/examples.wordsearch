@@ -1,14 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "name": "puzzle-parser-api",
-
-  "rewrites": [
-    {
-      "source": "/api/puzzle-parser",
-      "destination": "/src/platforms/vercel/api/puzzle-parser.ts"
-    }
-  ],
 
   "headers": [
     {
