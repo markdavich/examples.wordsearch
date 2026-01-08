@@ -13,7 +13,7 @@ export default {
   },
   data() {
     return {
-      assets: ["Ai, GitHub, Enlighten", "ABC", "Numbers", "Hello"],
+      assets: ["Ai", "GitHub", "Enlighten", "ABC", "Numbers", "Hello"],
     };
   },
   methods: {
@@ -32,7 +32,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.changeFile({ target: { value: "Enlighten" } });
+      this.changeFile({ target: { value: "Ai" } });
     });
   },
 };
