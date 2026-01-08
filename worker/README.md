@@ -30,9 +30,15 @@ This API accepts either:
 - **An image** of a word search puzzle (like a photo or screenshot)
 - **A document** containing a word search puzzle (like a PDF)
 
-It uses Google's Gemini AI to "read" the puzzle and extract:
+It uses AI to "read" the puzzle and extract:
 1. The letter grid (the box of letters)
 2. The list of words to find
+
+**Supported AI Providers:**
+| Provider | Model | Free Tier |
+|----------|-------|-----------|
+| Google Gemini | Gemini 2.0 Flash | ~1,000 req/day |
+| Groq | Llama 4 Scout | 14,400 req/day |
 
 The extracted data is returned in a format that the Word Search Solver app can use.
 
@@ -57,9 +63,9 @@ PUZZLE
 
 ```
 ┌─────────────────┐     ┌──────────────────────┐     ┌─────────────┐
-│   Your Phone    │     │   This Serverless    │     │  Google     │
-│   or Computer   │────▶│   API (Cloudflare    │────▶│  Gemini AI  │
-│                 │     │   or Vercel)         │     │             │
+│   Your Phone    │     │   This Serverless    │     │  Gemini AI  │
+│   or Computer   │────▶│   API (Cloudflare    │────▶│     OR      │
+│                 │     │   or Vercel)         │     │  Groq AI    │
 └─────────────────┘     └──────────────────────┘     └─────────────┘
         │                         │                         │
         │  1. Upload image        │  2. Send to AI          │
@@ -74,8 +80,8 @@ PUZZLE
 **Step by step:**
 
 1. You upload an image or document to the API
-2. The API sends it to Google's Gemini AI (a "vision" AI that can understand images)
-3. Gemini looks at the image, finds the letter grid and word list
+2. The API sends it to your chosen AI provider (Gemini or Groq)
+3. The AI looks at the image, finds the letter grid and word list
 4. The API formats the result and sends it back to you
 5. The Word Search Solver app can now solve the puzzle!
 
@@ -130,16 +136,27 @@ Before you begin, make sure you have:
 3. **A code editor** (VS Code recommended)
    - Download from: https://code.visualstudio.com
 
-### Get Your Free AI API Key
+### Get Your Free AI API Keys
 
-The API uses Google's Gemini AI, which has a generous free tier.
+You need API keys for the AI providers you want to use. Both have free tiers!
+
+#### Google Gemini API Key
 
 1. Go to **https://ai.google.dev**
 2. Click **"Get API key in Google AI Studio"**
 3. Sign in with your Google account
 4. Click **"Create API Key"**
 5. Copy the key (it looks like `AIzaSy...`)
-6. **Keep this key secret!** Don't share it or commit it to GitHub.
+
+#### Groq API Key
+
+1. Go to **https://console.groq.com**
+2. Sign up for a free account (no credit card required)
+3. Go to **API Keys** in the left sidebar
+4. Click **"Create API Key"**
+5. Copy the key (it looks like `gsk_...`)
+
+**Keep these keys secret!** Don't share them or commit them to GitHub.
 
 ### Installation
 
@@ -174,14 +191,17 @@ You should see something like:
 Ready on http://localhost:8787
 ```
 
-**But wait!** The API needs your Gemini API key. For local development, create a file called `.dev.vars` in the `worker` folder:
+**But wait!** The API needs your API keys. For local development, create a file called `.dev.vars` in the `worker` folder:
 
 ```bash
 # Create the secrets file (this file is ignored by git)
-echo "GEMINI_API_KEY=your-api-key-here" > .dev.vars
+cat > .dev.vars << 'EOF'
+GEMINI_API_KEY=your-gemini-key-here
+GROQ_API_KEY=your-groq-key-here
+EOF
 ```
 
-Replace `your-api-key-here` with your actual API key.
+Replace the placeholder values with your actual API keys.
 
 Now restart the dev server (`npm run dev`) and the API will work!
 
@@ -195,7 +215,10 @@ npm run dev:vercel
 For Vercel, create a `.env` file instead:
 
 ```bash
-echo "GEMINI_API_KEY=your-api-key-here" > .env
+cat > .env << 'EOF'
+GEMINI_API_KEY=your-gemini-key-here
+GROQ_API_KEY=your-groq-key-here
+EOF
 ```
 
 ---
@@ -222,15 +245,19 @@ npx wrangler login
 
 This will open your browser. Click "Allow" to authorize the connection.
 
-#### Step 3: Add Your API Key as a Secret
+#### Step 3: Add Your API Keys as Secrets
 
 Secrets are stored securely by Cloudflare (not in your code):
 
 ```bash
+# Add Gemini API key
 npx wrangler secret put GEMINI_API_KEY
-```
+# When prompted, paste your Gemini API key and press Enter
 
-When prompted, paste your Gemini API key and press Enter.
+# Add Groq API key
+npx wrangler secret put GROQ_API_KEY
+# When prompted, paste your Groq API key and press Enter
+```
 
 #### Step 4: Deploy!
 
@@ -282,15 +309,17 @@ vercel login
 
 Follow the prompts to authenticate.
 
-#### Step 4: Add Your API Key
+#### Step 4: Add Your API Keys
 
 ```bash
+# Add Gemini API key
 vercel env add GEMINI_API_KEY
-```
+# Select all environments, then paste your key
 
-When prompted:
-- Select all environments (Production, Preview, Development)
-- Paste your API key
+# Add Groq API key
+vercel env add GROQ_API_KEY
+# Select all environments, then paste your key
+```
 
 #### Step 5: Deploy!
 
@@ -526,22 +555,23 @@ The API includes CORS headers, but if you're still seeing errors:
 
 ## Cost Considerations
 
-### Google Gemini API
+### AI Providers
 
-- **Free tier**: ~1000 requests per day
-- **Paid**: ~$0.01 per image after free tier
+| Provider | Free Tier | Paid |
+|----------|-----------|------|
+| **Google Gemini** | ~1,000 req/day | ~$0.01/image |
+| **Groq** | 14,400 req/day | Very affordable |
 
-### Cloudflare Workers
+### Platforms
 
-- **Free tier**: 100,000 requests per day
-- **Paid**: $5/month for 10 million requests
-
-### Vercel
-
-- **Free tier**: 100,000 requests per month
-- **Paid**: ~$20/month for more
+| Platform | Free Tier | Paid |
+|----------|-----------|------|
+| **Cloudflare Workers** | 100,000 req/day | $5/month for 10M req |
+| **Vercel** | 100,000 req/month | ~$20/month for more |
 
 **For most hobby projects, you'll stay well within the free tiers!**
+
+**Pro tip:** Groq has a much more generous free tier (14,400 vs ~1,000 requests/day), so it's great for development and testing.
 
 ---
 

@@ -32,4 +32,6 @@ coverage
 # Worker secrets (never commit these!)
 worker/.dev.vars
 worker/.env
+worker/.wrangler
 .env
+.api.keys.json

@@ -19,7 +19,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { PuzzleParser, type PlatformConfig, type ParsePuzzleRequest } from '../../../core';
-import { GeminiAdapter } from '../../../adapters';
+import { createAIAdapter } from '../../../adapters';
 
 /**
  * Create a platform configuration for Vercel.
@@ -94,27 +94,20 @@ export default async function handler(
   // Create platform configuration
   const platformConfig = createVercelConfig();
 
-  // Check for API key
-  const apiKey = platformConfig.getSecret('GEMINI_API_KEY');
-  if (!apiKey) {
-    platformConfig.log('GEMINI_API_KEY not configured', 'error');
-    res.status(500).json({
-      success: false,
-      error: 'Server configuration error',
-      details: 'AI API key not configured. See README for setup instructions.',
-    });
-    return;
-  }
-
   try {
     // Vercel automatically parses JSON bodies
     const body = req.body as ParsePuzzleRequest;
 
-    // Create the AI adapter and parser
-    const aiAdapter = new GeminiAdapter({ apiKey });
-    const parser = new PuzzleParser(aiAdapter, platformConfig);
+    // Create the AI adapter using the factory (supports multiple providers)
+    const aiAdapter = createAIAdapter({
+      platform: platformConfig,
+      provider: body.aiProvider,
+    });
 
-    // Parse the puzzle
+    platformConfig.log(`Using AI provider: ${aiAdapter.name}`, 'info');
+
+    // Create the parser and parse the puzzle
+    const parser = new PuzzleParser(aiAdapter, platformConfig);
     const result = await parser.parse(body);
 
     // Return the result
@@ -122,10 +115,22 @@ export default async function handler(
   } catch (error) {
     platformConfig.log(`Request error: ${error}`, 'error');
 
+    // Provide helpful error messages for common issues
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    if (errorMessage.includes('API_KEY not configured')) {
+      res.status(500).json({
+        success: false,
+        error: 'Server configuration error',
+        details: `${errorMessage}. See README for setup instructions.`,
+      });
+      return;
+    }
+
     res.status(500).json({
       success: false,
       error: 'Failed to process request',
-      details: error instanceof Error ? error.message : 'Unknown error',
+      details: errorMessage,
     });
   }
 }

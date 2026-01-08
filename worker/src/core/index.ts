@@ -16,14 +16,16 @@ export type {
   ParsePuzzleResponse,
   ParsePuzzleError,
   ParsePuzzleResult,
+  AIProviderType,
 } from './interfaces';
 
-// Utility functions
+// Utility functions and constants
 export {
   isImageType,
   isDocumentType,
   SUPPORTED_IMAGE_TYPES,
   SUPPORTED_DOCUMENT_TYPES,
+  DEFAULT_AI_PROVIDER,
 } from './interfaces';
 
 // Prompts (in case you want to customize them)

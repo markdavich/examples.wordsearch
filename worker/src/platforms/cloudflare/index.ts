@@ -17,14 +17,16 @@
  */
 
 import { PuzzleParser, type PlatformConfig, type ParsePuzzleRequest } from '../../core';
-import { GeminiAdapter } from '../../adapters';
+import { createAIAdapter } from '../../adapters';
 
 /**
  * Cloudflare Workers use a specific environment interface for secrets.
- * Secrets are added via: npx wrangler secret put GEMINI_API_KEY
+ * Secrets are added via: npx wrangler secret put <SECRET_NAME>
  */
 interface CloudflareEnv {
-  GEMINI_API_KEY: string;
+  GEMINI_API_KEY?: string;
+  OPENAI_API_KEY?: string;
+  ANTHROPIC_API_KEY?: string;
   // Add more secrets here as needed
 }
 
@@ -124,29 +126,20 @@ export default {
     // Create platform configuration
     const platformConfig = createCloudflareConfig(env);
 
-    // Check for API key
-    const apiKey = platformConfig.getSecret('GEMINI_API_KEY');
-    if (!apiKey) {
-      platformConfig.log('GEMINI_API_KEY not configured', 'error');
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Server configuration error',
-          details: 'AI API key not configured. See README for setup instructions.',
-        },
-        500
-      );
-    }
-
     try {
       // Parse the incoming request body
       const body = await request.json() as ParsePuzzleRequest;
 
-      // Create the AI adapter and parser
-      const aiAdapter = new GeminiAdapter({ apiKey });
-      const parser = new PuzzleParser(aiAdapter, platformConfig);
+      // Create the AI adapter using the factory (supports multiple providers)
+      const aiAdapter = createAIAdapter({
+        platform: platformConfig,
+        provider: body.aiProvider,
+      });
 
-      // Parse the puzzle
+      platformConfig.log(`Using AI provider: ${aiAdapter.name}`, 'info');
+
+      // Create the parser and parse the puzzle
+      const parser = new PuzzleParser(aiAdapter, platformConfig);
       const result = await parser.parse(body);
 
       // Return the result
@@ -154,11 +147,25 @@ export default {
     } catch (error) {
       platformConfig.log(`Request error: ${error}`, 'error');
 
+      // Provide helpful error messages for common issues
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      if (errorMessage.includes('API_KEY not configured')) {
+        return jsonResponse(
+          {
+            success: false,
+            error: 'Server configuration error',
+            details: `${errorMessage}. See README for setup instructions.`,
+          },
+          500
+        );
+      }
+
       return jsonResponse(
         {
           success: false,
           error: 'Failed to process request',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: errorMessage,
         },
         500
       );

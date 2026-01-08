@@ -38,7 +38,24 @@ export interface ParsePuzzleRequest {
    * This helps the AI understand what it's looking at.
    */
   mimeType: string;
+
+  /**
+   * Which AI provider to use for parsing.
+   * Currently supported: 'gemini'
+   * Future: 'openai', 'claude'
+   */
+  aiProvider?: AIProviderType;
 }
+
+/**
+ * Supported AI provider types
+ */
+export type AIProviderType = 'gemini' | 'groq' | 'openai' | 'claude';
+
+/**
+ * Default AI provider if none specified
+ */
+export const DEFAULT_AI_PROVIDER: AIProviderType = 'gemini';
 
 /**
  * The successful response returned to the frontend.

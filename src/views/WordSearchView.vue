@@ -2,6 +2,10 @@
   <div class="word-search-view">
     <div class="col top mr pad">
       <FileInput class="mb shadow" @fileSelected="fileSelected" :label="'Word Search File'" />
+      <div class="row mb">
+        <AIUpload class="mr shadow" :aiProvider="selectedAiProvider" @puzzleParsed="fileSelected" />
+        <Ai class="shadow" v-model="selectedAiProvider" />
+      </div>
       <button class="clear-btn mb" @click="clearHighlights">Clear Highlights</button>
       <button class="circle-btn mb" @click="toggleCircles" :class="{ active: showCircles }">
         {{ showCircles ? 'Hide Circles' : 'Circle Answers' }}
@@ -37,6 +41,8 @@ import { ref, computed } from 'vue';
 
 // Components
 import FileInput from "@/components/FileInput.vue";
+import AIUpload from "@/components/AIUpload.vue";
+import Ai from "@/components/Ai.vue";
 import WordSearchGrid from "@/components/WordSearchGrid.vue";
 import Answers from "@/components/Answers.vue";
 import WordsToFind from "@/components/WordsToFind.vue";
@@ -61,6 +67,7 @@ const letters = ref([]);
 const words = ref([]);
 const answers = ref([]);
 const selectedWord = ref(null);
+const selectedAiProvider = ref('gemini');
 // Map of answer string -> color for highlighted answers
 const highlightedAnswers = ref({});
 // Circle state
@@ -300,5 +307,9 @@ function parseAnswerCoords(answer) {
 .circle-btn.active {
   background-color: #b3d9ff;
   border-color: #66b3ff;
+}
+
+.shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>

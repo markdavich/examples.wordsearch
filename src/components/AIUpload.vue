@@ -1,22 +1,27 @@
 <template>
   <div class="ai-upload">
-    <button
-      class="ai-upload-btn"
-      @click="triggerFileInput"
-      :disabled="isLoading"
-      :class="{ loading: isLoading }"
-    >
-      <span v-if="!isLoading">AI Upload</span>
-      <span v-else>Processing...</span>
-    </button>
+    <div class="title">AI Upload</div>
+    <div class="row">
+      <button
+        class="ai-upload-btn"
+        @click="triggerFileInput"
+        :disabled="isLoading"
+        :class="{ loading: isLoading }"
+      >
+        <span v-if="!isLoading">Upload Image</span>
+        <span v-else>Processing...</span>
+      </button>
 
-    <input
-      ref="fileInput"
-      type="file"
-      :accept="acceptedTypes"
-      @change="handleFileSelect"
-      style="display: none"
-    />
+      <PlatformSelector v-model="selectedPlatform" />
+
+      <input
+        ref="fileInput"
+        type="file"
+        :accept="acceptedTypes"
+        @change="handleFileSelect"
+        style="display: none"
+      />
+    </div>
 
     <div v-if="error" class="error-message">
       {{ error }}
@@ -25,20 +30,26 @@
 </template>
 
 <script>
-import { parsePuzzleWithAI, isSupportedForAIParsing } from '@/services/puzzle-parser-api.js';
+import PlatformSelector from "@/components/PlatformSelector.vue";
+import { parsePuzzleWithAI, isSupportedForAIParsing } from "@/services/puzzle-parser-api.js";
 
 export default {
-  name: 'AIUpload',
-
+  name: "AIUpload",
+  components: {
+    PlatformSelector,
+  },
+  props: {
+    aiProvider: { type: String, default: "gemini" },
+  },
   data() {
     return {
       isLoading: false,
       error: null,
+      selectedPlatform: "cloudflare",
       // Accept images and PDFs
-      acceptedTypes: 'image/png,image/jpeg,image/jpg,image/webp,image/gif,application/pdf',
+      acceptedTypes: "image/png,image/jpeg,image/jpg,image/webp,image/gif,application/pdf",
     };
   },
-
   methods: {
     triggerFileInput() {
       this.$refs.fileInput.click();
@@ -56,40 +67,64 @@ export default {
         // Validate file type
         if (!isSupportedForAIParsing(file)) {
           throw new Error(
-            'Unsupported file type. Please upload an image (PNG, JPG, WebP, GIF) or PDF.'
+            "Unsupported file type. Please upload an image (PNG, JPG, WebP, GIF) or PDF."
           );
         }
 
         // Check file size (limit to 10MB)
         const maxSize = 10 * 1024 * 1024; // 10MB
         if (file.size > maxSize) {
-          throw new Error('File is too large. Please upload a file smaller than 10MB.');
+          throw new Error("File is too large. Please upload a file smaller than 10MB.");
         }
 
-        // Call the AI API
-        const result = await parsePuzzleWithAI(file);
+        // Call the AI API with selected platform and AI provider
+        const result = await parsePuzzleWithAI(file, {
+          platform: this.selectedPlatform,
+          aiProvider: this.aiProvider,
+        });
 
         if (result.success) {
           // Emit the parsed puzzle data
-          this.$emit('puzzleParsed', result.puzzleData);
+          this.$emit("puzzleParsed", result.puzzleData);
         } else {
           throw new Error(result.error);
         }
       } catch (err) {
-        this.error = err.message || 'An error occurred while processing the file.';
+        this.error = err.message || "An error occurred while processing the file.";
       } finally {
         this.isLoading = false;
         // Reset the file input so the same file can be selected again
-        event.target.value = '';
+        event.target.value = "";
       }
     },
   },
 };
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .ai-upload {
-  display: inline-block;
+  border: solid var(--light-grey) 1px;
+  border-radius: 3px;
+  padding: calc(var(--padding) / 2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: var(--tile-background);
+}
+
+.title {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.row {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .ai-upload-btn {

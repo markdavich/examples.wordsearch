@@ -3,24 +3,17 @@
  *
  * This service handles communication with the serverless puzzle parser API.
  * It supports both image files (photos, screenshots) and text documents (PDFs).
+ *
+ * Supports multiple platforms (Cloudflare Workers, Vercel) and AI providers (Gemini, etc.)
  */
 
 /**
- * Configuration for the API client.
- * Update API_URL to point to your deployed serverless function.
+ * Platform URLs configuration.
+ * Update these to point to your deployed serverless functions.
  */
-const CONFIG = {
-  // For local development with Cloudflare Workers:
-  // API_URL: 'http://localhost:8787',
-
-  // For local development with Vercel:
-  // API_URL: 'http://localhost:3000/api/puzzle-parser',
-
-  // For production, set this to your deployed URL:
-  // API_URL: 'https://puzzle-parser-api.your-subdomain.workers.dev',
-  // API_URL: 'https://your-project.vercel.app/api/puzzle-parser',
-
-  API_URL: import.meta.env.VITE_PUZZLE_API_URL || 'http://localhost:8787',
+const PLATFORM_URLS = {
+  cloudflare: import.meta.env.VITE_CLOUDFLARE_API_URL || 'http://localhost:8787',
+  vercel: import.meta.env.VITE_VERCEL_API_URL || 'http://localhost:3000/api/puzzle-parser',
 };
 
 /**
@@ -102,12 +95,30 @@ async function extractTextFromPDF(file) {
 }
 
 /**
+ * Get the API URL for a given platform
+ * @param {string} platform - 'cloudflare' or 'vercel'
+ * @returns {string}
+ */
+function getApiUrl(platform) {
+  const url = PLATFORM_URLS[platform];
+  if (!url) {
+    throw new Error(`Unknown platform: ${platform}. Supported: cloudflare, vercel`);
+  }
+  return url;
+}
+
+/**
  * Parse a puzzle from an image or document using the AI API
  *
  * @param {File} file - The file to parse (image or document)
+ * @param {Object} options - Configuration options
+ * @param {string} options.platform - Which platform to use ('cloudflare' or 'vercel')
+ * @param {string} options.aiProvider - Which AI provider to use ('gemini', etc.)
  * @returns {Promise<{success: boolean, puzzleData?: string, error?: string}>}
  */
-export async function parsePuzzleWithAI(file) {
+export async function parsePuzzleWithAI(file, options = {}) {
+  const { platform = 'cloudflare', aiProvider = 'gemini' } = options;
+
   // Determine content type
   const contentType = isImageFile(file) ? 'image' : 'text';
 
@@ -119,9 +130,12 @@ export async function parsePuzzleWithAI(file) {
     content = await fileToBase64(file);
   }
 
+  // Get the API URL for the selected platform
+  const apiUrl = getApiUrl(platform);
+
   // Make the API request
   try {
-    const response = await fetch(CONFIG.API_URL, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -130,6 +144,7 @@ export async function parsePuzzleWithAI(file) {
         content,
         contentType,
         mimeType: file.type,
+        aiProvider, // Pass the selected AI provider to the backend
       }),
     });
 
@@ -148,7 +163,7 @@ export async function parsePuzzleWithAI(file) {
     if (error.message === 'Failed to fetch') {
       return {
         success: false,
-        error: 'Could not connect to the AI service. Make sure the API is running.',
+        error: `Could not connect to ${platform} API. Make sure the API is running at ${apiUrl}`,
       };
     }
 
@@ -160,17 +175,43 @@ export async function parsePuzzleWithAI(file) {
 }
 
 /**
- * Check if the API is available
+ * Check if a specific platform's API is available
+ * @param {string} platform - 'cloudflare' or 'vercel'
  * @returns {Promise<boolean>}
  */
-export async function isAPIAvailable() {
+export async function isAPIAvailable(platform = 'cloudflare') {
   try {
-    // Try a simple request to see if the API responds
-    const response = await fetch(CONFIG.API_URL, {
+    const apiUrl = getApiUrl(platform);
+    const response = await fetch(apiUrl, {
       method: 'OPTIONS',
     });
     return response.ok || response.status === 204;
   } catch {
     return false;
   }
+}
+
+/**
+ * Get the list of available platforms
+ * @returns {Array<{id: string, name: string, url: string}>}
+ */
+export function getAvailablePlatforms() {
+  return [
+    { id: 'cloudflare', name: 'Cloudflare Workers', url: PLATFORM_URLS.cloudflare },
+    { id: 'vercel', name: 'Vercel', url: PLATFORM_URLS.vercel },
+  ];
+}
+
+/**
+ * Get the list of available AI providers
+ * @returns {Array<{id: string, name: string}>}
+ */
+export function getAvailableAIProviders() {
+  return [
+    { id: 'gemini', name: 'Google Gemini' },
+    { id: 'groq', name: 'Groq (Llama 4)' },
+    // Future providers:
+    // { id: 'openai', name: 'OpenAI GPT-4' },
+    // { id: 'claude', name: 'Anthropic Claude' },
+  ];
 }
