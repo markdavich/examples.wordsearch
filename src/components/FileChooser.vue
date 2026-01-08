@@ -13,7 +13,7 @@ export default {
   },
   data() {
     return {
-      assets: ["Enlighten", "ABC", "Numbers", "Hello"],
+      assets: ["Ai, GitHub, Enlighten", "ABC", "Numbers", "Hello"],
     };
   },
   methods: {
