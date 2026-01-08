@@ -1,0 +1,78 @@
+# ============================================================================
+# Cloudflare Workers Configuration
+# ============================================================================
+#
+# This file configures the Cloudflare Worker deployment.
+# For full documentation, see: https://developers.cloudflare.com/workers/wrangler/configuration/
+#
+# Quick commands:
+#   npx wrangler dev          # Start local development server
+#   npx wrangler deploy       # Deploy to Cloudflare
+#   npx wrangler secret put GEMINI_API_KEY  # Add your API key
+#   npx wrangler tail         # View live logs
+#
+
+# The name of your worker (this becomes part of your URL)
+# Your worker will be available at: https://puzzle-parser-api.<your-subdomain>.workers.dev
+name = "puzzle-parser-api"
+
+# The entry point for the worker
+main = "src/platforms/cloudflare/index.ts"
+
+# Use the latest compatibility date for new features
+compatibility_date = "2024-01-01"
+
+# ============================================================================
+# Environment Variables (non-secret)
+# ============================================================================
+# Add non-sensitive configuration here. For sensitive values like API keys,
+# use `npx wrangler secret put <KEY_NAME>` instead.
+
+[vars]
+ENVIRONMENT = "production"
+
+# ============================================================================
+# Development Settings
+# ============================================================================
+# These settings apply when running `npx wrangler dev`
+
+[dev]
+# Local development port
+port = 8787
+# Enable local mode (doesn't require Cloudflare account for basic testing)
+local_protocol = "http"
+
+# ============================================================================
+# Build Configuration
+# ============================================================================
+# Wrangler automatically handles TypeScript compilation, but you can
+# customize the build process here if needed.
+
+# [build]
+# command = "npm run build"
+
+# ============================================================================
+# Secrets (DO NOT put actual values here!)
+# ============================================================================
+# Secrets are added via the CLI:
+#   npx wrangler secret put GEMINI_API_KEY
+#
+# Then enter your API key when prompted. The secret is encrypted and
+# stored securely by Cloudflare.
+#
+# Required secrets for this worker:
+#   - GEMINI_API_KEY: Your Google Gemini API key (get one at https://ai.google.dev)
+#
+
+# ============================================================================
+# Production vs Staging Environments (Optional)
+# ============================================================================
+# Uncomment and configure these for multiple deployment environments
+
+# [env.staging]
+# name = "puzzle-parser-api-staging"
+# vars = { ENVIRONMENT = "staging" }
+
+# [env.production]
+# name = "puzzle-parser-api"
+# vars = { ENVIRONMENT = "production" }

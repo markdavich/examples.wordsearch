@@ -4,16 +4,19 @@
     <div class="row">
       <input ref="fileInput" @input="fileInput($event)" type="file" accept="text/plain" />
       <FileChooser :alternateFile="alternateFile" @fileSelected="fileSelected" />
+      <AIUpload @puzzleParsed="onAIParsed" />
     </div>
   </div>
 </template>
 
 <script>
 import FileChooser from "@/components/FileChooser.vue";
+import AIUpload from "@/components/AIUpload.vue";
 export default {
   name: "FileInput",
   components: {
     FileChooser,
+    AIUpload,
   },
   data() {
     return {
@@ -43,6 +46,11 @@ export default {
       }
       this.$emit("fileSelected", file);
     },
+    onAIParsed(puzzleData) {
+      // AI-parsed data comes in the same format as text files
+      this.alternateFile = "AI Parsed Puzzle";
+      this.$emit("fileSelected", puzzleData);
+    },
   },
 };
 </script>
@@ -67,6 +75,8 @@ title {
   margin-top: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 </style>

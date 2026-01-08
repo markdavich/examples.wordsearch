@@ -1,0 +1,31 @@
+{
+  "name": "puzzle-parser-api",
+  "version": "1.0.0",
+  "description": "Serverless API for parsing word search puzzles using AI",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:vercel": "vercel dev",
+    "deploy": "wrangler deploy",
+    "deploy:vercel": "vercel --prod",
+    "tail": "wrangler tail",
+    "types": "tsc --noEmit"
+  },
+  "keywords": [
+    "word-search",
+    "puzzle",
+    "ai",
+    "gemini",
+    "cloudflare-workers",
+    "vercel",
+    "serverless"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "@vercel/node": "^3.0.0",
+    "typescript": "^5.3.0",
+    "wrangler": "^3.24.0"
+  }
+}

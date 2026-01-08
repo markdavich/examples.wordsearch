@@ -28,3 +28,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Worker secrets (never commit these!)
+worker/.dev.vars
+worker/.env
+.env
