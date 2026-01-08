@@ -55,53 +55,72 @@ const IMAGE_PARSE_PROMPT = `You are analyzing a word search puzzle image. Extrac
 INSTRUCTIONS:
 1. Identify the letter grid (the rectangular array of letters)
 2. Identify the word list (usually shown below, beside, or around the grid)
-3. Return the data in this EXACT format:
+3. Return the data in this EXACT format - NO other text, NO explanations:
 
-DIMENSIONS: [rows]x[columns]
-GRID:
-[each row of letters separated by spaces]
-[one row per line]
-WORDS:
-[each word on its own line, in UPPERCASE]
-
-EXAMPLE OUTPUT:
-DIMENSIONS: 10x10
-GRID:
-A B C D E F G H I J
-K L M N O P Q R S T
+[rows]x[columns]
+[grid row 1 - letters separated by spaces]
+[grid row 2 - letters separated by spaces]
 ...
-WORDS:
-HELLO
-WORLD
-PUZZLE
+[word 1]
+[word 2]
+[word 3]
+...
 
-IMPORTANT:
+CRITICAL FORMAT RULES:
+- First line: dimensions only (e.g., "15x15")
+- Next lines: grid rows, ONE ROW PER LINE, letters separated by SINGLE SPACES
+- After grid: words to find, ONE WORD PER LINE (NOT comma-separated!)
 - Use UPPERCASE for all letters
-- Separate grid letters with spaces
-- Each grid row on its own line
-- Each word on its own line
-- If you cannot read something clearly, make your best guess
-- Do not include any other text or explanation`;
+- Do NOT use labels like "DIMENSIONS:", "GRID:", or "WORDS:"
 
-const TEXT_PARSE_PROMPT = `You are parsing a word search puzzle from text. The input may be in various formats.
+EXAMPLE OUTPUT for a 5x5 puzzle:
+5x5
+H A S D F
+G E Y B H
+J K L Z X
+C V B L N
+G O O D O
+HELLO
+GOOD
+BYE
+
+Notice: Each word (HELLO, GOOD, BYE) is on its own separate line with NO commas.`;
+
+const TEXT_PARSE_PROMPT = `You are parsing a word search puzzle from text. Extract the puzzle data in a specific format.
 
 INSTRUCTIONS:
 1. Identify the letter grid
 2. Identify the word list
-3. Return the data in this EXACT format:
+3. Return the data in this EXACT format - NO other text, NO explanations:
 
-DIMENSIONS: [rows]x[columns]
-GRID:
-[each row of letters separated by spaces]
-WORDS:
-[each word on its own line, in UPPERCASE]
+[rows]x[columns]
+[grid row 1 - letters separated by spaces]
+[grid row 2 - letters separated by spaces]
+...
+[word 1]
+[word 2]
+[word 3]
+...
 
-IMPORTANT:
-- Convert all letters to UPPERCASE
-- Ensure grid letters are separated by single spaces
-- Put each word on its own line
-- If dimensions aren't specified, count the rows and columns
-- Handle various input formats (comma-separated, tab-separated, etc.)`;
+CRITICAL FORMAT RULES:
+- First line: dimensions only (e.g., "15x15")
+- Next lines: grid rows, ONE ROW PER LINE, letters separated by SINGLE SPACES
+- After grid: words to find, ONE WORD PER LINE (NOT comma-separated!)
+- Use UPPERCASE for all letters
+- Do NOT use labels like "DIMENSIONS:", "GRID:", or "WORDS:"
+
+EXAMPLE OUTPUT for a 5x5 puzzle:
+5x5
+H A S D F
+G E Y B H
+J K L Z X
+C V B L N
+G O O D O
+HELLO
+GOOD
+BYE
+
+Notice: Each word (HELLO, GOOD, BYE) is on its own separate line with NO commas.`;
 
 // ============================================================================
 // AI Adapters
@@ -382,37 +401,46 @@ class PuzzleParser {
   }
 
   private parseAIResponse(text: string): { dimensions: string; grid: string[][]; words: string[] } {
-    const dimensionsMatch = text.match(/DIMENSIONS:\s*(\d+)\s*x\s*(\d+)/i);
+    const lines = text.trim().split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+    if (lines.length < 2) {
+      throw new Error('AI response too short');
+    }
+
+    // First line should be dimensions (e.g., "5x5" or "10x15")
+    const dimensionsMatch = lines[0].match(/^(\d+)\s*x\s*(\d+)$/i);
     if (!dimensionsMatch) {
-      throw new Error('Could not find dimensions in AI response');
+      throw new Error(`First line should be dimensions (e.g., "5x5"), got: "${lines[0]}"`);
     }
     const dimensions = `${dimensionsMatch[1]}x${dimensionsMatch[2]}`;
+    const numRows = parseInt(dimensionsMatch[1], 10);
 
-    const gridMatch = text.match(/GRID:\s*([\s\S]*?)(?=WORDS:|$)/i);
-    if (!gridMatch) {
+    // Next N lines are the grid
+    const grid: string[][] = [];
+    let lineIndex = 1;
+
+    for (let i = 0; i < numRows && lineIndex < lines.length; i++, lineIndex++) {
+      const row = lines[lineIndex].split(/\s+/).map(letter => letter.toUpperCase());
+      // Only add if it looks like a grid row (contains single letters)
+      if (row.every(cell => cell.length === 1 && /^[A-Z]$/.test(cell))) {
+        grid.push(row);
+      } else {
+        break; // We've hit the words section
+      }
+    }
+
+    if (grid.length === 0) {
       throw new Error('Could not find grid in AI response');
     }
 
-    const gridLines = gridMatch[1]
-      .trim()
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
-
-    const grid = gridLines.map(line =>
-      line.split(/\s+/).map(letter => letter.toUpperCase())
-    );
-
-    const wordsMatch = text.match(/WORDS:\s*([\s\S]*?)$/i);
-    if (!wordsMatch) {
-      throw new Error('Could not find words in AI response');
+    // Remaining lines are words (one per line)
+    const words: string[] = [];
+    for (; lineIndex < lines.length; lineIndex++) {
+      const word = lines[lineIndex].toUpperCase().replace(/[^A-Z]/g, '');
+      if (word.length > 0) {
+        words.push(word);
+      }
     }
-
-    const words = wordsMatch[1]
-      .trim()
-      .split('\n')
-      .map(word => word.trim().toUpperCase())
-      .filter(word => word.length > 0 && /^[A-Z]+$/.test(word));
 
     return { dimensions, grid, words };
   }

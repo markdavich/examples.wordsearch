@@ -14,22 +14,28 @@ const OUTPUT_FORMAT_INSTRUCTIONS = `
 Return ONLY the puzzle data in this EXACT format (no other text, no explanations, no markdown):
 
 <dimensions>
-<grid>
-<words>
+<grid rows>
+<word list>
 
-Where:
-- <dimensions> is the grid size as "ROWSxCOLUMNS" (e.g., "10x10" or "15x12")
-- <grid> is the letter grid with EACH ROW on its own line, letters separated by SINGLE SPACES
-- <words> is the list of words to find, ONE WORD PER LINE
+CRITICAL FORMAT RULES:
+1. First line: dimensions as ROWSxCOLUMNS (e.g., "10x10" or "15x12")
+2. Next lines: the letter grid, ONE ROW PER LINE, letters separated by SINGLE SPACES
+3. After the grid: the words to find, ONE WORD PER LINE (NOT comma-separated!)
 
-Example output for a 3x3 puzzle:
-3x3
-A B C
-D E F
-G H I
-CAT
-DOG
-BEE
+IMPORTANT: Each word must be on its OWN LINE. Do NOT use commas, do NOT put multiple words on the same line.
+
+Example output for a 5x5 puzzle with 3 words:
+5x5
+H A S D F
+G E Y B H
+J K L Z X
+C V B L N
+G O O D O
+HELLO
+GOOD
+BYE
+
+Notice how each word (HELLO, GOOD, BYE) is on its own separate line with NO commas.
 `.trim();
 
 /**
