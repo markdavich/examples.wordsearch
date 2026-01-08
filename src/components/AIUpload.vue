@@ -8,7 +8,7 @@
         :disabled="isLoading"
         :class="{ loading: isLoading }"
       >
-        <span v-if="!isLoading">Upload Image</span>
+        <span v-if="!isLoading">Upload File</span>
         <span v-else>Processing...</span>
       </button>
 
@@ -47,8 +47,8 @@ export default {
     return {
       isLoading: false,
       error: null,
-      // Accept images and PDFs
-      acceptedTypes: "image/png,image/jpeg,image/jpg,image/webp,image/gif,application/pdf",
+      // Accept images and documents
+      acceptedTypes: "image/png,image/jpeg,image/jpg,image/webp,image/gif,.txt,.csv,.pdf,.docx,text/plain,text/csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     };
   },
   methods: {
@@ -72,7 +72,7 @@ export default {
         // Validate file type
         if (!isSupportedForAIParsing(file)) {
           throw new Error(
-            "Unsupported file type. Please upload an image (PNG, JPG, WebP, GIF) or PDF."
+            "Unsupported file type. Please upload an image (PNG, JPG, WebP, GIF) or document (TXT, CSV, PDF, DOCX)."
           );
         }
 

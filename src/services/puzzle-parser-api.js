@@ -31,8 +31,10 @@ const IMAGE_TYPES = [
  * Document MIME types we support
  */
 const DOCUMENT_TYPES = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'text/plain',                                                               // .txt
+  'text/csv',                                                                 // .csv
+  'application/pdf',                                                          // .pdf
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
 ];
 
 /**
@@ -82,16 +84,27 @@ function fileToBase64(file) {
 }
 
 /**
- * Extract text from a PDF file using pdf.js
- * This is a client-side extraction before sending to the AI.
+ * Read a text file and return its contents
  * @param {File} file
  * @returns {Promise<string>}
  */
-async function extractTextFromPDF(file) {
-  // For now, we'll send the PDF as-is and let the AI handle it
-  // In a future enhancement, we could use pdf.js for client-side extraction
-  const base64 = await fileToBase64(file);
-  return base64;
+function readTextFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+}
+
+/**
+ * Check if a file is a plain text file (txt, csv)
+ * @param {File} file
+ * @returns {boolean}
+ */
+function isPlainTextFile(file) {
+  return file.type === 'text/plain' || file.type === 'text/csv' ||
+         file.name.endsWith('.txt') || file.name.endsWith('.csv');
 }
 
 /**
@@ -122,11 +135,13 @@ export async function parsePuzzleWithAI(file, options = {}) {
   // Determine content type
   const contentType = isImageFile(file) ? 'image' : 'text';
 
-  // Convert file to base64
+  // Get file content - text files are sent as plain text, others as base64
   let content;
-  if (file.type === 'application/pdf') {
-    content = await extractTextFromPDF(file);
+  if (isPlainTextFile(file)) {
+    // Read text files directly as text
+    content = await readTextFile(file);
   } else {
+    // Images, PDFs, and DOCX are sent as base64
     content = await fileToBase64(file);
   }
 

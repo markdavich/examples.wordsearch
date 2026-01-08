@@ -13,8 +13,9 @@ export const SUPPORTED_IMAGE_TYPES = [
  * Document MIME types we support for text-based parsing
  */
 export const SUPPORTED_DOCUMENT_TYPES = [
-  'text/plain',
-  'application/pdf',
+  'text/plain',                                                               // .txt
+  'text/csv',                                                                 // .csv
+  'application/pdf',                                                          // .pdf
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
 ] as const;
 
