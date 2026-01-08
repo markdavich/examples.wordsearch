@@ -42,5 +42,4 @@ function getWords(file, rows) {
 
 function getLines(file) {
   return file.split(/\r\n|\r|\n/);
-  // return file.split(/\n/);
 }

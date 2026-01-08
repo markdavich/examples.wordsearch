@@ -134,14 +134,14 @@ function getStadiumPath(circle) {
   const angle = Math.atan2(dy, dx);
 
   // Radius for the semicircle ends (half cell height with padding)
-  const r = cellSize.value * 0.45;
+  const r = cellSize.value * 0.38;
 
   // Perpendicular offset for the parallel lines
   const perpX = Math.sin(angle) * r;
   const perpY = -Math.cos(angle) * r;
 
   // Extend start and end points outward by a small amount for padding
-  const padding = cellSize.value * 0.08;
+  const padding = cellSize.value * 0.05;
   const extendX = Math.cos(angle) * padding;
   const extendY = Math.sin(angle) * padding;
 
