@@ -25,9 +25,12 @@ import { createAIAdapter } from '../../adapters';
  */
 interface CloudflareEnv {
   GEMINI_API_KEY?: string;
+  GROQ_API_KEY?: string;
+  TOGETHER_API_KEY?: string;
   OPENAI_API_KEY?: string;
   ANTHROPIC_API_KEY?: string;
-  // Add more secrets here as needed
+  // Cloudflare AI binding (add [ai] to wrangler.toml)
+  AI?: Ai;
 }
 
 /**
@@ -134,6 +137,7 @@ export default {
       const aiAdapter = createAIAdapter({
         platform: platformConfig,
         provider: body.aiProvider,
+        cloudflareAI: env.AI,
       });
 
       platformConfig.log(`Using AI provider: ${aiAdapter.name}`, 'info');

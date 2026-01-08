@@ -13,6 +13,8 @@ import type { AIAdapter, AIProviderType, PlatformConfig } from '../core/interfac
 import { DEFAULT_AI_PROVIDER } from '../core/interfaces';
 import { GeminiAdapter } from './gemini-adapter';
 import { GroqAdapter } from './groq-adapter';
+import { CloudflareAIAdapter } from './cloudflare-ai-adapter';
+import { TogetherAIAdapter } from './together-ai-adapter';
 
 /**
  * Configuration for creating AI adapters
@@ -27,6 +29,12 @@ export interface AIAdapterFactoryConfig {
    * Which AI provider to use
    */
   provider?: AIProviderType;
+
+  /**
+   * Cloudflare AI binding (only needed for 'cloudflare-ai' provider)
+   * This comes from the Cloudflare Workers environment
+   */
+  cloudflareAI?: Ai;
 }
 
 /**
@@ -54,6 +62,21 @@ export function createAIAdapter(config: AIAdapterFactoryConfig): AIAdapter {
         throw new Error('GROQ_API_KEY not configured');
       }
       return new GroqAdapter({ apiKey });
+    }
+
+    case 'cloudflare-ai': {
+      if (!config.cloudflareAI) {
+        throw new Error('Cloudflare AI binding not available. Add [ai] binding to wrangler.toml');
+      }
+      return new CloudflareAIAdapter({ ai: config.cloudflareAI });
+    }
+
+    case 'together': {
+      const apiKey = config.platform.getSecret('TOGETHER_API_KEY');
+      if (!apiKey) {
+        throw new Error('TOGETHER_API_KEY not configured');
+      }
+      return new TogetherAIAdapter({ apiKey });
     }
 
     case 'openai': {
@@ -85,7 +108,7 @@ export function createAIAdapter(config: AIAdapterFactoryConfig): AIAdapter {
  * Get the list of currently supported AI providers
  */
 export function getSupportedProviders(): AIProviderType[] {
-  return ['gemini', 'groq'];
+  return ['gemini', 'groq', 'cloudflare-ai', 'together'];
 }
 
 /**

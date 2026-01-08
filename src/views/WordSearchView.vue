@@ -3,8 +3,8 @@
     <div class="col top mr pad">
       <FileInput class="mb shadow" @fileSelected="fileSelected" :label="'Word Search File'" />
       <div class="row mb">
-        <AIUpload class="mr shadow" :aiProvider="selectedAiProvider" @puzzleParsed="fileSelected" />
-        <Ai class="shadow" v-model="selectedAiProvider" />
+        <AIUpload class="mr shadow" :aiProvider="selectedAiProvider" :platform="selectedPlatform" @puzzleParsed="fileSelected" @platformChange="onPlatformChange" />
+        <Ai class="shadow" v-model="selectedAiProvider" :platform="selectedPlatform" />
       </div>
       <button class="clear-btn mb" @click="clearHighlights">Clear Highlights</button>
       <button class="circle-btn mb" @click="toggleCircles" :class="{ active: showCircles }">
@@ -67,7 +67,8 @@ const letters = ref([]);
 const words = ref([]);
 const answers = ref([]);
 const selectedWord = ref(null);
-const selectedAiProvider = ref('gemini');
+const selectedPlatform = ref('cloudflare');
+const selectedAiProvider = ref('groq');
 // Map of answer string -> color for highlighted answers
 const highlightedAnswers = ref({});
 // Circle state
@@ -213,6 +214,15 @@ function onCircleHover(answer) {
     }
   } else {
     clearHighlights();
+  }
+}
+
+function onPlatformChange(platform) {
+  selectedPlatform.value = platform;
+  // Reset AI provider to first available option for the new platform
+  // Cloudflare-AI is only available on Cloudflare
+  if (platform !== 'cloudflare' && selectedAiProvider.value === 'cloudflare-ai') {
+    selectedAiProvider.value = 'groq';
   }
 }
 

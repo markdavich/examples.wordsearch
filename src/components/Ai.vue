@@ -2,7 +2,7 @@
   <div class="ai-container">
     <div class="title">AI Provider</div>
     <div class="row">
-      <AiSelector v-model="selectedProvider" @change="onProviderChange" />
+      <AiSelector v-model="selectedProvider" :platform="platform" @change="onProviderChange" />
     </div>
   </div>
 </template>
@@ -16,7 +16,8 @@ export default {
     AiSelector,
   },
   props: {
-    modelValue: { type: String, default: "gemini" },
+    modelValue: { type: String, default: "groq" },
+    platform: { type: String, default: "cloudflare" },
   },
   emits: ["update:modelValue"],
   data() {

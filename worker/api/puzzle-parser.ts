@@ -10,7 +10,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Types and Interfaces
 // ============================================================================
 
-type AIProviderType = 'gemini' | 'groq' | 'openai' | 'claude';
+type AIProviderType = 'gemini' | 'groq' | 'cloudflare-ai' | 'together' | 'openai' | 'claude';
 
 interface ParsePuzzleRequest {
   content: string;
@@ -265,6 +265,89 @@ class GroqAdapter implements AIAdapter {
   }
 }
 
+class TogetherAIAdapter implements AIAdapter {
+  readonly name = 'Together AI (Llama Vision)';
+  private readonly apiKey: string;
+  private readonly visionModel: string;
+  private readonly textModel: string;
+  private readonly baseUrl = 'https://api.together.xyz/v1/chat/completions';
+
+  constructor(config: { apiKey: string; visionModel?: string; textModel?: string }) {
+    this.apiKey = config.apiKey;
+    this.visionModel = config.visionModel || 'meta-llama/Llama-Vision-Free';
+    this.textModel = config.textModel || 'meta-llama/Llama-3.3-70B-Instruct-Turbo';
+  }
+
+  async parseImage(imageBase64: string, mimeType: string): Promise<string> {
+    const dataUrl = `data:${mimeType};base64,${imageBase64}`;
+    const response = await fetch(this.baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`
+      },
+      body: JSON.stringify({
+        model: this.visionModel,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: dataUrl } },
+            { type: 'text', text: IMAGE_PARSE_PROMPT }
+          ]
+        }],
+        temperature: 0.1,
+        max_tokens: 4096
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Together AI API error (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json() as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const text = data.choices?.[0]?.message?.content;
+    if (!text) {
+      throw new Error('No response from Together AI API');
+    }
+    return text;
+  }
+
+  async parseText(textContent: string): Promise<string> {
+    const response = await fetch(this.baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`
+      },
+      body: JSON.stringify({
+        model: this.textModel,
+        messages: [
+          { role: 'user', content: TEXT_PARSE_PROMPT + '\n\n' + textContent }
+        ],
+        temperature: 0.1,
+        max_tokens: 4096
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Together AI API error (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json() as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const text = data.choices?.[0]?.message?.content;
+    if (!text) {
+      throw new Error('No response from Together AI API');
+    }
+    return text;
+  }
+}
+
 // ============================================================================
 // Puzzle Parser
 // ============================================================================
@@ -380,6 +463,16 @@ function createAIAdapter(platformConfig: PlatformConfig, provider?: AIProviderTy
         throw new Error('GROQ_API_KEY not configured');
       }
       return new GroqAdapter({ apiKey });
+    }
+    case 'together': {
+      const apiKey = platformConfig.getSecret('TOGETHER_API_KEY');
+      if (!apiKey) {
+        throw new Error('TOGETHER_API_KEY not configured');
+      }
+      return new TogetherAIAdapter({ apiKey });
+    }
+    case 'cloudflare-ai': {
+      throw new Error('Cloudflare AI is only available on Cloudflare Workers platform');
     }
     default:
       throw new Error(`Unsupported AI provider: ${selectedProvider}`);

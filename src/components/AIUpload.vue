@@ -12,7 +12,7 @@
         <span v-else>Processing...</span>
       </button>
 
-      <PlatformSelector v-model="selectedPlatform" />
+      <PlatformSelector :modelValue="platform" @update:modelValue="onPlatformChange" />
 
       <input
         ref="fileInput"
@@ -39,13 +39,14 @@ export default {
     PlatformSelector,
   },
   props: {
-    aiProvider: { type: String, default: "gemini" },
+    aiProvider: { type: String, default: "groq" },
+    platform: { type: String, default: "cloudflare" },
   },
+  emits: ["puzzleParsed", "platformChange"],
   data() {
     return {
       isLoading: false,
       error: null,
-      selectedPlatform: "cloudflare",
       // Accept images and PDFs
       acceptedTypes: "image/png,image/jpeg,image/jpg,image/webp,image/gif,application/pdf",
     };
@@ -53,6 +54,10 @@ export default {
   methods: {
     triggerFileInput() {
       this.$refs.fileInput.click();
+    },
+
+    onPlatformChange(platform) {
+      this.$emit("platformChange", platform);
     },
 
     async handleFileSelect(event) {
@@ -79,7 +84,7 @@ export default {
 
         // Call the AI API with selected platform and AI provider
         const result = await parsePuzzleWithAI(file, {
-          platform: this.selectedPlatform,
+          platform: this.platform,
           aiProvider: this.aiProvider,
         });
 

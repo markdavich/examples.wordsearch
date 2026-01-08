@@ -50,12 +50,12 @@ export interface ParsePuzzleRequest {
 /**
  * Supported AI provider types
  */
-export type AIProviderType = 'gemini' | 'groq' | 'openai' | 'claude';
+export type AIProviderType = 'gemini' | 'groq' | 'cloudflare-ai' | 'together' | 'openai' | 'claude';
 
 /**
  * Default AI provider if none specified
  */
-export const DEFAULT_AI_PROVIDER: AIProviderType = 'gemini';
+export const DEFAULT_AI_PROVIDER: AIProviderType = 'groq';
 
 /**
  * The successful response returned to the frontend.

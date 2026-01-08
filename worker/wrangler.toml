@@ -52,16 +52,29 @@ local_protocol = "http"
 # command = "npm run build"
 
 # ============================================================================
+# Cloudflare AI Binding
+# ============================================================================
+# This enables the built-in Cloudflare Workers AI (no API key needed!)
+# Free tier: 10,000 neurons/day
+
+[ai]
+binding = "AI"
+
+# ============================================================================
 # Secrets (DO NOT put actual values here!)
 # ============================================================================
 # Secrets are added via the CLI:
 #   npx wrangler secret put GEMINI_API_KEY
+#   npx wrangler secret put GROQ_API_KEY
+#   npx wrangler secret put TOGETHER_API_KEY
 #
 # Then enter your API key when prompted. The secret is encrypted and
 # stored securely by Cloudflare.
 #
-# Required secrets for this worker:
-#   - GEMINI_API_KEY: Your Google Gemini API key (get one at https://ai.google.dev)
+# Required/Optional secrets for this worker:
+#   - GEMINI_API_KEY: Google Gemini API key (https://ai.google.dev)
+#   - GROQ_API_KEY: Groq API key (https://console.groq.com)
+#   - TOGETHER_API_KEY: Together AI API key (https://api.together.xyz)
 #
 
 # ============================================================================

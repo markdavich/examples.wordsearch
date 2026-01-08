@@ -7,6 +7,8 @@
  * Available adapters:
  * - GeminiAdapter: Google's Gemini AI (has free tier)
  * - GroqAdapter: Groq with Llama 4 (has generous free tier, very fast)
+ * - CloudflareAIAdapter: Cloudflare Workers AI (no API key needed, uses account)
+ * - TogetherAIAdapter: Together AI with Llama Vision ($5 free credits)
  *
  * Future adapters could include:
  * - OpenAIAdapter: For GPT-4 Vision
@@ -20,6 +22,12 @@ export type { GeminiAdapterConfig } from './gemini-adapter';
 
 export { GroqAdapter } from './groq-adapter';
 export type { GroqAdapterConfig } from './groq-adapter';
+
+export { CloudflareAIAdapter } from './cloudflare-ai-adapter';
+export type { CloudflareAIAdapterConfig } from './cloudflare-ai-adapter';
+
+export { TogetherAIAdapter } from './together-ai-adapter';
+export type { TogetherAIAdapterConfig } from './together-ai-adapter';
 
 // Factory for creating adapters
 export {

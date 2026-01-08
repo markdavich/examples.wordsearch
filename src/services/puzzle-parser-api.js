@@ -204,14 +204,30 @@ export function getAvailablePlatforms() {
 
 /**
  * Get the list of available AI providers
- * @returns {Array<{id: string, name: string}>}
+ * @returns {Array<{id: string, name: string, platforms?: string[]}>}
  */
 export function getAvailableAIProviders() {
   return [
-    { id: 'gemini', name: 'Google Gemini' },
     { id: 'groq', name: 'Groq (Llama 4)' },
+    { id: 'together', name: 'Together AI (Llama Vision)' },
+    { id: 'cloudflare-ai', name: 'Cloudflare AI (LLaVA)', platforms: ['cloudflare'] },
+    { id: 'gemini', name: 'Google Gemini' },
     // Future providers:
     // { id: 'openai', name: 'OpenAI GPT-4' },
     // { id: 'claude', name: 'Anthropic Claude' },
   ];
+}
+
+/**
+ * Get AI providers available for a specific platform
+ * @param {string} platform - 'cloudflare' or 'vercel'
+ * @returns {Array<{id: string, name: string}>}
+ */
+export function getAIProvidersForPlatform(platform) {
+  return getAvailableAIProviders().filter(provider => {
+    // If no platform restriction, available on all platforms
+    if (!provider.platforms) return true;
+    // Check if the provider is available on the specified platform
+    return provider.platforms.includes(platform);
+  });
 }
